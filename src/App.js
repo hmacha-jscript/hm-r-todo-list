@@ -11,11 +11,53 @@ class App extends Component {
         item: '',
         editItem: false
     }
-    handleChange = (e) => { console.log('handle change') }
-    handleSubmit = (e) => { console.log('handle submit') }
-    clearList = () => { console.log('clear list') }
-    handleDelete = (id) => { console.log('handle delete') }
-    handleEdit = (id) => { console.log('handle edit') }
+    handleChange = (e) => { 
+        const val = e.target.value;
+        this.setState(()=>{
+            return { item: val}
+        })
+     }
+    handleSubmit = (e) => { 
+        let {id,item,editItem,items} = this.state;
+        e.preventDefault();
+        let oldItems = [...items];
+
+        if(editItem){   
+            let newItems = oldItems.map(todo=>{
+                if(todo.id===id){
+                    todo.title = item;
+                }
+                return todo
+            })
+            this.setState(()=>{
+                return {item:"", items: newItems, editItem: false}
+            })
+        } else {
+            let workItem = {id: uuid(), title: this.state.item}
+            oldItems.push(workItem);
+            this.setState(()=>{
+                return { items: oldItems, item: ""}
+            })
+        }
+    }
+    clearList = () => { 
+        this.setState(()=>{
+            return {items: [], item:"", editItem: false}
+        })
+    }
+    handleDelete = (id) => { 
+        let items = [...this.state.items];
+        let newItems = items.filter(item=>item.id!==id)
+        this.setState(()=>{
+            return {items: newItems}
+        })
+    }
+    handleEdit = (id) => { 
+        let item = this.state.items.find(item=>item.id===id).title
+        this.setState(()=>{
+            return {item, editItem: true, id }
+        })
+    }
 
     render(){
     return (
